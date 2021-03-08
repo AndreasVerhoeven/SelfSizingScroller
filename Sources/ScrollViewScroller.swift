@@ -161,7 +161,7 @@ extension UIScrollView {
 		@objc private func displayLinkFired(_ displayLink: CADisplayLink) {
 			// check if we should still be scrolling (a finger down on the scrollview stops scrolling)
 			guard let scrollView = scrollView else { return stopScrolling() }
-			guard scrollView.panGestureRecognizer.state != .possible else { return }
+			guard scrollView.panGestureRecognizer.state == .possible  else { return }
 
 			// check how much we have progressed
 			let elapsedFrameTime = (displayLink.targetTimestamp - displayLink.timestamp)
