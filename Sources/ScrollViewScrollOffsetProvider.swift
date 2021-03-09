@@ -106,7 +106,7 @@ fileprivate extension UIScrollView.ScrollOffsetProvider.Position {
 					return nil
 				} else {
 					// not visible, determine if the target is before our current position and, if so, scroll the target to start,
-					// otherwise to end: that way we make sure that we stop scrolling wants the contents is visible.
+					// otherwise to end: that way we make sure that we stop scrolling once the contents is visible.
 					let position: UIScrollView.ScrollOffsetProvider.Position = (value.start < currentLine.start ? .start : .end)
 					return position.resolve(value: value, visible: visible, current: current)
 				}

@@ -19,10 +19,10 @@ func reallyScrollToItem(at indexPath: IndexPath, at scrollPosition: UICollection
 ```
 
 ## Extendable
- The actual scrolling and determing where to scroll to are separated, so it's easy to extend by implementing a single method in a protocol:
+ The actual scrolling and determening where to scroll to are separated, so it's easy to extend by implementing a single method in a protocol:
  ```
  protocol ScrollOffsetProviderProtocol {
- func targetScrollOffset(witStartOffset startOffset: CGPoint) -> CGPoint?
+   func targetScrollOffset(witStartOffset startOffset: CGPoint) -> CGPoint?
  }
  ```
  
@@ -32,12 +32,15 @@ class MyScrollOffsetProvider: ScrollOffsetProviderProtocol {
   func targetScrollOffset(witStartOffset startOffset: CGPoint) -> CGPoint? {
     // calculate actual position, gets called on every animation frame.
 	// It's fine to return different positions on each invocation,
-	// as long as it eventually stabilizes.
+	// as long as it eventually stabilizes (otherwise we'll scroll
+	// forever).
     return ...;
   }
 }
- let scrollView = UIScrollView()
- scrollView.scrollTo
+ 
+let scrollView = UIScrollView()
+let provider = MyScrollOffsetProvider()
+scrollView.startScrolling(with: provider, animated: true)
  ```
  
 Just dynamically return which offset to scroll to and the library will make it happen.
