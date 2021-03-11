@@ -24,6 +24,7 @@ extension UIScrollView {
 		public private(set) weak var scrollView: UIScrollView?
 		public let horizontalPosition: Position // the horizontal "edge" position of the rect where should land
 		public let verticalPosition: Position // the vertical "edge" position of the rect where should land
+		public let positionInsets: UIEdgeInsets // how much we should inset the scroll position
 
 		// this callback can be set to provide a rect of the target we want to show
 		public typealias RectProviderCallback = (UIScrollView) -> CGRect?
@@ -32,11 +33,13 @@ extension UIScrollView {
 		public init(scrollView: UIScrollView,
 			 horizontalPosition: Position = .none,
 			 verticalPosition: Position = .none,
+			 positionInsets: UIEdgeInsets = .zero,
 			 rectProvider: RectProviderCallback? = nil) {
 
 			self.scrollView = scrollView
 			self.horizontalPosition = horizontalPosition
 			self.verticalPosition = verticalPosition
+			self.positionInsets = positionInsets
 			self.rectProvider = rectProvider
 		}
 
@@ -47,8 +50,9 @@ extension UIScrollView {
 									   for rect: CGRect,
 									   horizontalPosition: Position,
 									   verticalPosition: Position,
+									   positionInsets: UIEdgeInsets,
 									   in scrollView: UIScrollView) -> CGPoint? {
-			let visibleFrame = scrollView.visibleFrame
+			let visibleFrame = scrollView.visibleFrame.inset(by: positionInsets)
 			let x = horizontalPosition.resolve(value: rect.horizontalLine,
 											   visible: visibleFrame.horizontalLine,
 											   current: startOffset.x)
@@ -68,6 +72,7 @@ extension UIScrollView {
 										   for: rect,
 										   horizontalPosition: horizontalPosition,
 										   verticalPosition: verticalPosition,
+										   positionInsets: positionInsets,
 										   in: scrollView)
 		}
 	}

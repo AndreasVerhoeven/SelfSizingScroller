@@ -14,6 +14,7 @@ extension UICollectionView {
 		public weak var collectionView: UICollectionView?
 		public var indexPath: IndexPath
 		public var position: UICollectionView.ScrollPosition
+		public var positionInsets: UIEdgeInsets = .zero
 
 		public func targetScrollOffset(witStartOffset startOffset: CGPoint) -> CGPoint? {
 			guard let collectionView = collectionView else { return nil }
@@ -27,6 +28,7 @@ extension UICollectionView {
 																		for: itemFrame,
 																		horizontalPosition: position.scrollOffsetProviderHorizontalPosition,
 																		verticalPosition: position.scrollOffsetProviderVerticalPosition,
+																		positionInsets: positionInsets,
 																		in: collectionView)
 		}
 	}
@@ -37,8 +39,9 @@ extension UIScrollView.Scroller {
 	public func scrollToItem(at indexPath: IndexPath,
 					  in collectionView: UICollectionView,
 					  position: UICollectionView.ScrollPosition,
+					  positionInsets: UIEdgeInsets = .zero,
 					  animated: Bool) {
-		let provider = UICollectionView.ScrollOffsetProvider(collectionView: collectionView, indexPath: indexPath, position: position)
+		let provider = UICollectionView.ScrollOffsetProvider(collectionView: collectionView, indexPath: indexPath, position: position, positionInsets: positionInsets)
 		startScrolling(with: provider, in: collectionView, animated: animated)
 	}
 }

@@ -29,14 +29,14 @@ extension UIScrollView {
 
 extension UITableView {
 	// helper function to scroll to an indexpath - uses the retained scroller
-	public func reallyScrollToRow(at indexPath: IndexPath, at scrollPosition: UITableView.ScrollPosition, animated: Bool) {
-		scroller.scrollToRow(at: indexPath, in: self, position: scrollPosition, animated: animated)
+	public func reallyScrollToRow(at indexPath: IndexPath, at scrollPosition: UITableView.ScrollPosition, insets: UIEdgeInsets = .zero, animated: Bool) {
+		scroller.scrollToRow(at: indexPath, in: self, position: scrollPosition, positionInsets: insets, animated: animated)
 	}
 }
 
 extension UICollectionView {
 	// helper function to scroll to an indexpath - uses the retained scroller
-	public func reallyScrollToItem(at indexPath: IndexPath, at scrollPosition: UICollectionView.ScrollPosition, animated: Bool) {
-		scroller.scrollToItem(at: indexPath, in: self, position: scrollPosition, animated: animated)
+	public func reallyScrollToItem(at indexPath: IndexPath, at scrollPosition: UICollectionView.ScrollPosition, insets: UIEdgeInsets = .zero, animated: Bool) {
+		scroller.scrollToItem(at: indexPath, in: self, position: scrollPosition, positionInsets: insets, animated: animated)
 	}
 }

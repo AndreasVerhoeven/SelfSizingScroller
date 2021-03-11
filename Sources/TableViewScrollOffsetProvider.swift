@@ -15,6 +15,7 @@ extension UITableView {
 		public weak var tableView: UITableView?
 		public var indexPath: IndexPath
 		public var position: UITableView.ScrollPosition
+		public var positionInsets: UIEdgeInsets = .zero
 
 		public func targetScrollOffset(witStartOffset startOffset: CGPoint) -> CGPoint? {
 			guard let tableView = tableView else { return nil }
@@ -26,6 +27,7 @@ extension UITableView {
 																		for: rowRect,
 																		horizontalPosition: .none,
 																		verticalPosition: position.scrollOffsetProviderPosition,
+																		positionInsets: positionInsets,
 																		in: tableView)
 		}
 	}
@@ -36,8 +38,9 @@ extension UIScrollView.Scroller {
 	public func scrollToRow(at indexPath: IndexPath,
 					 in tableView: UITableView,
 					 position: UITableView.ScrollPosition,
+					 positionInsets: UIEdgeInsets = .zero,
 					 animated: Bool) {
-		let provider = UITableView.ScrollOffsetProvider(tableView: tableView, indexPath: indexPath, position: position)
+		let provider = UITableView.ScrollOffsetProvider(tableView: tableView, indexPath: indexPath, position: position, positionInsets: positionInsets)
 		startScrolling(with: provider, in: tableView, animated: animated)
 	}
 }
