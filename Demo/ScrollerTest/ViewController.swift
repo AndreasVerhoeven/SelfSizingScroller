@@ -62,12 +62,12 @@ class ViewController: UITableViewController {
 		let cell = tableView.dequeueReusableCell(withIdentifier: "Cell") ?? UITableViewCell(style: .default, reuseIdentifier: "Cell")
 		let height = itemHeights[indexPath.row]
 		cell.textLabel?.text = "row \(indexPath.row), height = \(height)"
-		for constraint in cell.contentView.constraints {
+		for constraint in cell.constraints {
 			if constraint.firstAttribute == .height {
 				cell.removeConstraint(constraint)
 			}
 		}
-		cell.contentView.heightAnchor.constraint(equalToConstant: height).isActive = true
+		cell.heightAnchor.constraint(equalToConstant: height).isActive = true
 		return cell
 	}
 

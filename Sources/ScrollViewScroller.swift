@@ -124,7 +124,7 @@ extension UIScrollView {
 			#if targetEnvironment(simulator)
 				return animationDuration * TimeInterval(UIAnimationDragCoefficient())
 			#else
-				animationDuration
+				return animationDuration
 			#endif
 		}
 
