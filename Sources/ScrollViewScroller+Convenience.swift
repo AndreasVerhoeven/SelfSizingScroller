@@ -29,14 +29,22 @@ extension UIScrollView {
 
 extension UITableView {
 	// helper function to scroll to an indexpath - uses the retained scroller
-	public func reallyScrollToRow(at indexPath: IndexPath, at scrollPosition: UITableView.ScrollPosition, insets: UIEdgeInsets = .zero, animated: Bool) {
-		scroller.scrollToRow(at: indexPath, in: self, position: scrollPosition, positionInsets: insets, animated: animated)
+	public func reallyScrollToRow(at indexPath: IndexPath,
+								  at scrollPosition: UITableView.ScrollPosition,
+								  insets: UIEdgeInsets = .zero,
+								  animated: Bool,
+								  completion: UIScrollView.Scroller.Callback<UITableView>.CompletionHandler? = nil) {
+		scroller.scrollToRow(at: indexPath, in: self, position: scrollPosition, positionInsets: insets, animated: animated, completion: completion)
 	}
 }
 
 extension UICollectionView {
 	// helper function to scroll to an indexpath - uses the retained scroller
-	public func reallyScrollToItem(at indexPath: IndexPath, at scrollPosition: UICollectionView.ScrollPosition, insets: UIEdgeInsets = .zero, animated: Bool) {
-		scroller.scrollToItem(at: indexPath, in: self, position: scrollPosition, positionInsets: insets, animated: animated)
+	public func reallyScrollToItem(at indexPath: IndexPath,
+								   at scrollPosition: UICollectionView.ScrollPosition,
+								   insets: UIEdgeInsets = .zero,
+								   animated: Bool,
+								   completion: UIScrollView.Scroller.Callback<UICollectionView>.CompletionHandler? = nil) {
+		scroller.scrollToItem(at: indexPath, in: self, position: scrollPosition, positionInsets: insets, animated: animated, completion: completion)
 	}
 }

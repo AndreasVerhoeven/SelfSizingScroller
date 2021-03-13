@@ -58,6 +58,10 @@ extension UIScrollView {
 		public private(set) weak var scrollView: UIScrollView?
 		public private(set) var offsetProvider: ScrollOffsetProviderProtocol?
 
+		// completion
+		public typealias CompletionHandler = Callback<UIScrollView>.CompletionHandler
+		private var completionHandler: CompletionHandler?
+
 		// to drive our animation
 		private var elapsedAnimationTime = TimeInterval(0)
 		private var displayLink: CADisplayLink?
@@ -71,7 +75,7 @@ extension UIScrollView {
 		private var verticalTargets = Array<Target>()
 
 		deinit {
-			stopScrolling()
+			stopScrolling(hasCompleted: false, shouldCallCompletionHandler: false)
 		}
 
 		// actually starts scrolling in a scrollview towards the offset given
@@ -80,9 +84,14 @@ extension UIScrollView {
 
 		public func startScrolling(with offsetProvider: ScrollOffsetProviderProtocol,
 								   in scrollView: UIScrollView,
-								   animated: Bool = true) {
+								   animated: Bool = true,
+								   completion completionHandler: CompletionHandler? = nil) {
+
+			stopScrolling()
+
 			self.scrollView = scrollView
 			self.offsetProvider = offsetProvider
+			self.completionHandler = completionHandler
 			elapsedAnimationTime = 0
 			startOffset = scrollView.contentOffset
 			currentTargetPoint = startOffset
@@ -90,6 +99,14 @@ extension UIScrollView {
 			verticalTargets.removeAll()
 
 			if animated {
+				isScrolling = true
+
+				// pre-emptively check if we need to scroll
+				addTargetsIfNeeded(start: 0)
+				guard verticalTargets.count > 0 || horizontalTargets.count > 0 else {
+					return stopScrolling(hasCompleted: true)
+				}
+
 				// animated, we're gonna start a display link to drive our animation
 				if displayLink == nil {
 					let newDisplayLink = CADisplayLink(target: self, selector: #selector(displayLinkFired(_:)))
@@ -97,8 +114,9 @@ extension UIScrollView {
 					newDisplayLink.add(to: .main, forMode: .common)
 				}
 
-				isScrolling = true
 			} else {
+				isScrolling = true
+
 				// not animated, so we just go to the position that is indicated to us, force layout and then check again
 				// until we've stabilized
 				while true {
@@ -108,16 +126,30 @@ extension UIScrollView {
 					scrollView.setNeedsLayout()
 					scrollView.layoutIfNeeded()
 				}
+				stopScrolling(hasCompleted: true)
 			}
-
 		}
 
 		// stops scrolling
 		public func stopScrolling() {
+			stopScrolling(hasCompleted: false)
+		}
+
+		private func stopScrolling(hasCompleted: Bool, shouldCallCompletionHandler: Bool = true) {
 			guard isScrolling else { return }
 
+			horizontalTargets.removeAll()
+			verticalTargets.removeAll()
+
+			isScrolling = false
 			displayLink?.invalidate()
 			displayLink = nil
+
+			let handler = completionHandler
+			completionHandler = nil
+			if shouldCallCompletionHandler == true , let handler = handler, let scrollView = scrollView {
+				handler(scrollView, hasCompleted)
+			}
 		}
 
 		private var actualAnimationDuration: TimeInterval {
@@ -160,8 +192,8 @@ extension UIScrollView {
 
 		@objc private func displayLinkFired(_ displayLink: CADisplayLink) {
 			// check if we should still be scrolling (a finger down on the scrollview stops scrolling)
-			guard let scrollView = scrollView else { return stopScrolling() }
-			guard scrollView.panGestureRecognizer.state == .possible  else { return }
+			guard let scrollView = scrollView else { return stopScrolling(hasCompleted: false, shouldCallCompletionHandler: false) }
+			guard scrollView.panGestureRecognizer.state == .possible  else { return stopScrolling(hasCompleted: false) }
 
 			// check how much we have progressed
 			let elapsedFrameTime = (displayLink.targetTimestamp - displayLink.timestamp)
@@ -173,7 +205,7 @@ extension UIScrollView {
 			if currentTargetPoint.isAlmostEqual(to: scrollView.contentOffset)
 				|| (horizontalTargets.isEmpty && verticalTargets.isEmpty) {
 				// if we're at out position or there are no targets to animate, we're done and can stop scrolling
-				return stopScrolling()
+				return stopScrolling(hasCompleted: true)
 			}
 
 			// calculate our new offset and set it, and wait until the next frame
@@ -216,6 +248,20 @@ fileprivate extension UIScrollView.Scroller {
 		func easedValue(for totalElapsedTime: TimeInterval) -> CGFloat {
 			let progress = easedProgress(for: totalElapsedTime)
 			return progress * value
+		}
+	}
+}
+
+public extension UIScrollView.Scroller {
+	enum Callback<ViewType: UIScrollView> {
+		public typealias CompletionHandler = (ViewType, _ hasCompleted: Bool) -> Void
+
+		static func wrapped(_ handler: CompletionHandler?) -> Callback<UIScrollView>.CompletionHandler? {
+			guard let handler = handler else { return nil }
+			return { scrollView, hasCompleted in
+				guard let view = scrollView as? ViewType else { return }
+				handler(view, hasCompleted)
+			}
 		}
 	}
 }

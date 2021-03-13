@@ -21,7 +21,14 @@ class ViewController: UITableViewController {
 		if usesUIKit == true {
 			tableView.scrollToRow(at: IndexPath(row: row, section: 0), at: .top, animated: true)
 		} else {
-			tableView.reallyScrollToRow(at: IndexPath(row: row, section: 0), at: .top, animated: true)
+			print("Started Scrolling")
+			tableView.reallyScrollToRow(at: IndexPath(row: row, section: 0), at: .top, animated: true, completion: { tableView, completed in
+				if completed == true {
+					print("Finished Scrolling")
+				} else {
+					print("Interrupted Scrolling")
+				}
+			})
 		}
 		title = "scrolled to: \(row)"
 	}
@@ -29,6 +36,7 @@ class ViewController: UITableViewController {
 	override func viewDidLoad() {
 		super.viewDidLoad()
 
+		tableView.register(CustomHeightCell.self, forCellReuseIdentifier: "Cell")
 		tableView.estimatedRowHeight = 10
 		tableView.rowHeight = UITableView.automaticDimension
 
@@ -59,17 +67,22 @@ class ViewController: UITableViewController {
 	}
 
 	override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-		let cell = tableView.dequeueReusableCell(withIdentifier: "Cell") ?? UITableViewCell(style: .default, reuseIdentifier: "Cell")
+		let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath) as! CustomHeightCell
 		let height = itemHeights[indexPath.row]
+		cell.customHeight = height
 		cell.textLabel?.text = "row \(indexPath.row), height = \(height)"
-		for constraint in cell.constraints {
-			if constraint.firstAttribute == .height {
-				cell.removeConstraint(constraint)
-			}
-		}
-		cell.heightAnchor.constraint(equalToConstant: height).isActive = true
 		return cell
 	}
 
+}
+
+class CustomHeightCell: UITableViewCell {
+	var customHeight: CGFloat?
+
+	override func systemLayoutSizeFitting(_ targetSize: CGSize, withHorizontalFittingPriority horizontalFittingPriority: UILayoutPriority, verticalFittingPriority: UILayoutPriority) -> CGSize {
+		var size = super.systemLayoutSizeFitting(targetSize, withHorizontalFittingPriority: horizontalFittingPriority, verticalFittingPriority: verticalFittingPriority)
+		customHeight.map { size.height = $0 }
+		return size
+	}
 }
 

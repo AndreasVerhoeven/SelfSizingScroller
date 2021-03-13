@@ -40,9 +40,10 @@ extension UIScrollView.Scroller {
 					  in collectionView: UICollectionView,
 					  position: UICollectionView.ScrollPosition,
 					  positionInsets: UIEdgeInsets = .zero,
-					  animated: Bool) {
+					  animated: Bool,
+					  completion: Callback<UICollectionView>.CompletionHandler? = nil) {
 		let provider = UICollectionView.ScrollOffsetProvider(collectionView: collectionView, indexPath: indexPath, position: position, positionInsets: positionInsets)
-		startScrolling(with: provider, in: collectionView, animated: animated)
+		startScrolling(with: provider, in: collectionView, animated: animated, completion: Callback<UICollectionView>.wrapped(completion))
 	}
 }
 

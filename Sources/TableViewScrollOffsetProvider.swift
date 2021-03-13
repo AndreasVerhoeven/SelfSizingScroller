@@ -39,9 +39,10 @@ extension UIScrollView.Scroller {
 					 in tableView: UITableView,
 					 position: UITableView.ScrollPosition,
 					 positionInsets: UIEdgeInsets = .zero,
-					 animated: Bool) {
+					 animated: Bool,
+					 completion: Callback<UITableView>.CompletionHandler? = nil) {
 		let provider = UITableView.ScrollOffsetProvider(tableView: tableView, indexPath: indexPath, position: position, positionInsets: positionInsets)
-		startScrolling(with: provider, in: tableView, animated: animated)
+		startScrolling(with: provider, in: tableView, animated: animated, completion: Callback<UITableView>.wrapped(completion))
 	}
 }
 
