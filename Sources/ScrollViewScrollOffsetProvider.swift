@@ -65,7 +65,7 @@ extension UIScrollView {
 			return scrollView.clampOffsetToScrollableBounds(offset)
 		}
 
-		public func targetScrollOffset(witStartOffset startOffset: CGPoint) -> CGPoint? {
+		public func targetScrollOffset(withStartOffset startOffset: CGPoint) -> CGPoint? {
 			guard let scrollView = scrollView else { return nil }
 			guard let rect = rectProvider?(scrollView) else { return nil }
 			return Self.targetScrollOffset(withStartOffset: startOffset,

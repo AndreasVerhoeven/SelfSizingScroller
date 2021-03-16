@@ -15,7 +15,7 @@ public protocol ScrollOffsetProviderProtocol {
 	// should return the offset we should scroll to, or nil if we shouldn't scroll.
 	// - this implementation should be fast, since it will be queried every animation frame
 	// - values can change every frame, of course (that's the whole point of this exercise)
-	func targetScrollOffset(witStartOffset startOffset: CGPoint) -> CGPoint?
+	func targetScrollOffset(withStartOffset startOffset: CGPoint) -> CGPoint?
 }
 
 extension UIScrollView {
@@ -120,7 +120,7 @@ extension UIScrollView {
 				// not animated, so we just go to the position that is indicated to us, force layout and then check again
 				// until we've stabilized
 				while true {
-					guard let offset = offsetProvider.targetScrollOffset(witStartOffset: startOffset) else { break }
+					guard let offset = offsetProvider.targetScrollOffset(withStartOffset: startOffset) else { break }
 					if offset.isAlmostEqual(to: scrollView.contentOffset) { break }
 					scrollView.setContentOffset(offset, animated: false)
 					scrollView.setNeedsLayout()
@@ -161,7 +161,7 @@ extension UIScrollView {
 		}
 
 		private func addTargetsIfNeeded(start: TimeInterval = 0) {
-			guard let target = offsetProvider?.targetScrollOffset(witStartOffset: startOffset) else { return }
+			guard let target = offsetProvider?.targetScrollOffset(withStartOffset: startOffset) else { return }
 
 			let timeToStillAnimate = actualAnimationDuration - elapsedAnimationTime
 			let duration = max(0.125, timeToStillAnimate)

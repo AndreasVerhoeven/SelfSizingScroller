@@ -17,7 +17,7 @@ extension UITableView {
 		public var position: UITableView.ScrollPosition
 		public var positionInsets: UIEdgeInsets = .zero
 
-		public func targetScrollOffset(witStartOffset startOffset: CGPoint) -> CGPoint? {
+		public func targetScrollOffset(withStartOffset startOffset: CGPoint) -> CGPoint? {
 			guard let tableView = tableView else { return nil }
 			guard indexPath.section < tableView.numberOfSections else { return nil }
 			guard indexPath.row < tableView.numberOfRows(inSection: indexPath.section) else { return nil }

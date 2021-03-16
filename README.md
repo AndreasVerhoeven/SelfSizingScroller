@@ -1,5 +1,5 @@
 # SelfSizingScroller
-Fixes scrollToRow/ItemAtIndexPath: for Self Sizing Cells
+Fixes `scrollToRow/ItemAtIndexPath:` for Self Sizing Cells
 
 Self sizing cells in UITableView and UICollectionView are great, but
 they make `scrollToRowAtIndexPath:` and `scrollToItemAtIndexPath:`
@@ -39,7 +39,7 @@ There's an optional completionHandler that will be called when scrolling is done
 Additionally, checking `scrollView.scroller.isScrolling` also works to see if we're currently in a scroll animation.
 
 ## Extendable
- The actual scrolling and determening where to scroll to are separated, so it's easy to extend by implementing a single method in a protocol:
+ The actual scrolling and determining where to scroll to are separated, so it's easy to extend by implementing a single method in a protocol:
  ```
  protocol ScrollOffsetProviderProtocol {
    func targetScrollOffset(witStartOffset startOffset: CGPoint) -> CGPoint?

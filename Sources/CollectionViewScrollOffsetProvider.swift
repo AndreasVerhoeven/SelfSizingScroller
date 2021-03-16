@@ -16,7 +16,7 @@ extension UICollectionView {
 		public var position: UICollectionView.ScrollPosition
 		public var positionInsets: UIEdgeInsets = .zero
 
-		public func targetScrollOffset(witStartOffset startOffset: CGPoint) -> CGPoint? {
+		public func targetScrollOffset(withStartOffset startOffset: CGPoint) -> CGPoint? {
 			guard let collectionView = collectionView else { return nil }
 			guard indexPath.section < collectionView.numberOfSections else { return nil }
 			guard indexPath.row < collectionView.numberOfItems(inSection: indexPath.section) else { return nil }
