@@ -53,11 +53,11 @@ extension UIScrollView {
 									   positionInsets: UIEdgeInsets,
 									   in scrollView: UIScrollView) -> CGPoint? {
 			let visibleFrame = scrollView.visibleFrame.inset(by: positionInsets)
-			let x = horizontalPosition.resolve(value: rect.horizontalLine,
-											   visible: visibleFrame.horizontalLine,
+			let x = horizontalPosition.resolve(value: rect.horizontalLineSegment,
+											   visible: visibleFrame.horizontalLineSegment,
 											   current: startOffset.x)
-			let y = verticalPosition.resolve(value: rect.verticalLine,
-											 visible: visibleFrame.verticalLine,
+			let y = verticalPosition.resolve(value: rect.verticalLineSegment,
+											 visible: visibleFrame.verticalLineSegment,
 											 current: startOffset.y)
 
 			let currentOffset = scrollView.contentOffset
@@ -80,28 +80,28 @@ extension UIScrollView {
 
 fileprivate extension CGRect {
 	// helper
-	var horizontalLine: UIScrollView.ScrollOffsetProvider.Position.Line { .init(start: minX, end: maxX) }
-	var verticalLine: UIScrollView.ScrollOffsetProvider.Position.Line { .init(start: minY, end: maxY) }
+	var horizontalLineSegment: UIScrollView.ScrollOffsetProvider.Position.LineSegment { .init(start: minX, end: maxX) }
+	var verticalLineSegment: UIScrollView.ScrollOffsetProvider.Position.LineSegment { .init(start: minY, end: maxY) }
 }
 
 fileprivate extension UIScrollView.ScrollOffsetProvider.Position {
 	// a line on an axis with a start and endpoint
-	struct Line {
+	struct LineSegment {
 		var start: CGFloat
 		var end: CGFloat
 
-		var length: CGFloat {end - start}
-		var center: CGFloat { start + length * 0.5}
+		var length: CGFloat { end - start }
+		var center: CGFloat { start + length * 0.5 }
 		func contains(_ value: CGFloat) -> Bool { value >= start && value < end }
-		func contains(_ line: Line) -> Bool { contains(line.start) && contains(line.end) }
-		func offset(by offset: CGFloat) -> Line { Line(start: start + offset, end: end + offset) }
+		func contains(_ line: Self) -> Bool { contains(line.start) && contains(line.end) }
+		func offset(by offset: CGFloat) -> Self { Self(start: start + offset, end: end + offset) }
 	}
 
 	// this resolves the scroll position on a single axis in a scrollview, given the parameters:
 	// value = the line we want to scroll to
 	// visible = the frame that is visible
 	// current = the position we're starting from
-	func resolve(value: Line, visible: Line, current: CGFloat) -> CGFloat? {
+	func resolve(value: LineSegment, visible: LineSegment, current: CGFloat) -> CGFloat? {
 		switch self {
 			case .none: return nil
 			case .visible:
@@ -116,7 +116,7 @@ fileprivate extension UIScrollView.ScrollOffsetProvider.Position {
 					return position.resolve(value: value, visible: visible, current: current)
 				}
 			case .start: return value.start - visible.start
-			case .center: return visible.center - value.length * 0.5
+			case .center: return value.center - visible.center
 			case .end: return value.end - visible.end
 		}
 	}
