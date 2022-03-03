@@ -110,6 +110,10 @@ extension UIScrollView {
 				// animated, we're gonna start a display link to drive our animation
 				if displayLink == nil {
 					let newDisplayLink = CADisplayLink(target: self, selector: #selector(displayLinkFired(_:)))
+					if #available(iOS 15, *) {
+						// https://developer.apple.com/documentation/quartzcore/optimizing_promotion_refresh_rates_for_iphone_13_pro_and_ipad_pro
+						newDisplayLink.preferredFrameRateRange = CAFrameRateRange(minimum:80, maximum:120, preferred:120)
+					}
 					displayLink = newDisplayLink
 					newDisplayLink.add(to: .main, forMode: .common)
 				}
