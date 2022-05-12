@@ -115,9 +115,9 @@ fileprivate extension UIScrollView.ScrollOffsetProvider.Position {
 					let position: UIScrollView.ScrollOffsetProvider.Position = (value.start < currentLine.start ? .start : .end)
 					return position.resolve(value: value, visible: visible, current: current)
 				}
-			case .start: return value.start - visible.start
-			case .center: return value.center - visible.center
-			case .end: return value.end - visible.end
+			case .start: return floor((value.start - visible.start) * UIScreen.main.scale) / UIScreen.main.scale
+			case .center: return round((value.center - visible.center) * UIScreen.main.scale) / UIScreen.main.scale
+			case .end: return ceil((value.end - visible.end) * UIScreen.main.scale) / UIScreen.main.scale
 		}
 	}
 }
