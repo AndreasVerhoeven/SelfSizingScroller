@@ -124,12 +124,16 @@ extension UIScrollView {
 				// not animated, so we just go to the position that is indicated to us, force layout and then check again
 				// until we've stabilized
 				while true {
+					scrollView.setNeedsLayout()
+					scrollView.layoutIfNeeded()
+
 					guard let offset = offsetProvider.targetScrollOffset(withStartOffset: startOffset) else { break }
 					if offset.isAlmostEqual(to: scrollView.contentOffset) { break }
 					scrollView.setContentOffset(offset, animated: false)
-					scrollView.setNeedsLayout()
-					scrollView.layoutIfNeeded()
 				}
+
+				scrollView.setNeedsLayout()
+				scrollView.layoutIfNeeded()
 				stopScrolling(hasCompleted: true)
 			}
 		}
